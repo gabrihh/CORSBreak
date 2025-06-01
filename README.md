@@ -1,2 +1,2 @@
 # CORSBreak
-https://corsbreak.vercel.app/api/get?url=...
+https://corsbreak.vercel.app/api/get
