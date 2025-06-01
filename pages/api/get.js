@@ -1,24 +1,26 @@
 export default async function handler(req, res) {
-  let { url } = req.query;
-  
-  if (!url) {
-    res.status(400).json({ error: "Missing 'url' parameter" });
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
     return;
   }
-  url = encodeURIComponent(url);
+
+  const urlParam = req.url.split('?url=')[1];
+  if (!urlParam) {
+    return res.status(400).json({ error: 'Missing url parameter' });
+  }
+
+  const targetUrl = decodeURIComponent(urlParam);
   try {
-    const response = await fetch(url);
-    const headers = {};
-    response.headers.forEach((value, key) => (headers[key] = value));
+    const response = await fetch(targetUrl);
+    const data = await response.text();
 
-    res.status(response.status);
-    res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Headers", "*");
-    res.setHeader("Content-Type", headers["content-type"] || "application/octet-stream");
-
-    const buffer = await response.arrayBuffer();
-    res.send(Buffer.from(buffer));
+    res.setHeader('Content-Type', 'text/plain');
+    res.send(data);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-}
+      }
