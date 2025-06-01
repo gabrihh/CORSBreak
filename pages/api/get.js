@@ -1,9 +1,11 @@
 export default async function handler(req, res) {
-  const { url } = req.query;
+  let { url } = req.query;
+  
   if (!url) {
     res.status(400).json({ error: "Missing 'url' parameter" });
     return;
   }
+  url = encodeURIComponent(url);
   try {
     const response = await fetch(url);
     const headers = {};
