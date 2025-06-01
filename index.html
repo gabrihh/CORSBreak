@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 </head>
@@ -9,18 +9,17 @@
 (async () => {
   const params = new URLSearchParams(window.location.search);
   const urlParam = params.get("url");
-  const typeParam = params.get("type") || "raw";
-  if (!urlParam) return;
+
+  if (!urlParam) {
+    document.body.textContent = "Error: Missing required query parameter 'url'.";
+    return;
+  }
+
   try {
     const response = await fetch(urlParam);
-    if (!response.ok) throw new Error(response.status);
-    if (typeParam === "json") {
-      const json = await response.json();
-      document.body.textContent = JSON.stringify(json, null, 2);
-    } else {
-      const text = await response.text();
-      document.body.textContent = text;
-    }
+    if (!response.ok) throw new Error(response.statusText);
+    const text = await response.text();
+    document.body.textContent = text;
   } catch (error) {
     document.body.textContent = error.message;
   }
