@@ -1,2 +1,2 @@
 # CORSBreak
-https://gabrihh.github.io/CORSBreak/
+https://corsbreak.vercel.app/api/get?url=...
