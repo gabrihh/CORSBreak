@@ -1,2 +1,2 @@
 # CORSBreak
-https://gabrihh.github.io/corsbreak/api/
+https://gabrihh.github.io/CORSBreak/api/index.html
