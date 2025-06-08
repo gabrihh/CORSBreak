@@ -1,7 +1,8 @@
 export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET,OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  const requestHeaders = Object.keys(req.headers).join(',');
+  res.setHeader('Access-Control-Allow-Headers', requestHeaders);
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
@@ -14,12 +15,38 @@ export default async function handler(req, res) {
   }
 
   const targetUrl = decodeURIComponent(urlParam);
-  try {
-    const response = await fetch(targetUrl);
-    const data = await response.text();
 
-    res.setHeader('Content-Type', 'text/plain');
-    res.send(data);
+  const forbiddenHeaders = ['host', 'content-length', 'accept-encoding', 'connection'];
+
+  const fetchHeaders = {};
+  for (const [key, value] of Object.entries(req.headers)) {
+    if (!forbiddenHeaders.includes(key.toLowerCase())) {
+      fetchHeaders[key] = value;
+    }
+  }
+
+  try {
+    const response = await fetch(targetUrl, {
+      method: 'GET',
+      headers: fetchHeaders,
+    });
+
+    response.headers.forEach((value, key) => {
+      if (key.toLowerCase() !== 'content-encoding') {
+        res.setHeader(key, value);
+      }
+    });
+
+    res.status(response.status);
+
+    const contentType = response.headers.get('content-type') || '';
+    if (contentType.includes('application/json') || contentType.includes('text')) {
+      const data = await response.text();
+      res.send(data);
+    } else {
+      const buffer = await response.arrayBuffer();
+      res.send(Buffer.from(buffer));
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
