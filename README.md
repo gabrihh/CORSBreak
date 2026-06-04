@@ -2,9 +2,8 @@
 
 *Hosted for free on Vercel.*
 
-https://corsbreak.vercel.app/api/get<br>
-or<br>
-https://corsbreak.vercel.app/api/post<br>
+[GET] https://corsbreak.vercel.app/api/get<br>
+[POST] https://corsbreak.vercel.app/api/post<br>
 **(The "url" key is required in the "body")**<br>
 
 Example [GET]:
